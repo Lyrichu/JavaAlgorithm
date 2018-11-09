@@ -22,14 +22,24 @@
             <version>1.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180813</version>
+        </dependency>
+
+        <!-- generate pdf -->
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
         <!--<dependency>-->
             <!--<groupId>com.xiaomi.deeplearning</groupId>-->
             <!--<artifactId>chatbot-jieba</artifactId>-->
             <!--<version>1.0.3</version>-->
         <!--</dependency>-->
     </dependencies>
-
-
-
 
 </project>
