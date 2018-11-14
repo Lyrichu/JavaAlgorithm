@@ -85,8 +85,38 @@ public class ServerThread extends Thread {
                     // code = 1,直接显示在textArea中
                     // code = 11,在list中加入
                     // code = 21,把当前房间的所有用户返回给client
+                    if (roomId == -1) {
+                        roomId = Long.parseLong(message);
+                        roomList.join(user,roomId);
+                        sendRoomMsgExceptSelf(buildCodeWithMsg(
+                                "<name>" + user.getName() + "</name>" + "<id>" + user.getId() + "</id>",11
+                        ));
+                        // 这个消息需要加入房间里已有用户的列表
+                        returnMsg(buildCodeWithMsg(
+                                "你加入了房间:" + roomList.getRoom(roomId).getName(),1
+                        ));
+                        returnMsg(buildCodeWithMsg(getMembersInRoom(),21));
+                    } else {
+                      // 退出房间
+                      roomList.escape(user,roomId);
+                      sendRoomMsg
+                    }
 
             }
         }
     }
+
+    /*
+     * 获得该用户房间中的所有用户列表,并构成一定格式的消息返回
+     */
+    private String getMembersInRoom() {
+      // 先从room 列表获得该用户的room
+      Room room = roomList.getRoom(roomId);
+      StringBuffer buffer = new StringBuffer();
+      if (room != null) {
+        // 获得房间中所有用户的列表,然后构造一定的格式发送出去
+        ArrayList<User>
+      }
+    }
+
 }
