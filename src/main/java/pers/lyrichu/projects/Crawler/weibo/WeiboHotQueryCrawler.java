@@ -16,7 +16,7 @@ public class WeiboHotQueryCrawler {
     private static final String WEIBO_REALTIME_HOTQUERY_URL = "http://s.weibo.com/top/summary?cate=realtimehot";
     private static final int TIMEOUT = 1000; // 超时1000ms
 
-    private static List<WeiboHotQuery> crawlerHotquries() {
+    public static List<WeiboHotQuery> crawlerHotQueries() {
         List<WeiboHotQuery> hotQueryList = new ArrayList<>();
         try {
             Document document = Jsoup.parse(new URL(WEIBO_REALTIME_HOTQUERY_URL),TIMEOUT);
@@ -41,7 +41,7 @@ public class WeiboHotQueryCrawler {
     }
 
     public static void main(String[] args) {
-        List<WeiboHotQuery> hotQueryList = crawlerHotquries();
+        List<WeiboHotQuery> hotQueryList = crawlerHotQueries();
         System.out.println("text\turl\ttag\tviewCount\trank");
         for (WeiboHotQuery hotQuery:hotQueryList) {
             System.out.println(

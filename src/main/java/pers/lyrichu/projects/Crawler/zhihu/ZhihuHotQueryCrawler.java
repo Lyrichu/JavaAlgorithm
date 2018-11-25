@@ -15,7 +15,7 @@ public class ZhihuHotQueryCrawler {
     private static final String ZHIHU_HOTQUERY_URL = ZHIHU_BASE_URL + "/hot";
     private static final int TIMEOUT = 1000;
 
-    private static List<ZhihuHotQuery> crawlerHotQueries() {
+    public static List<ZhihuHotQuery> crawlerHotQueries() {
         try {
             URL url = new URL(ZHIHU_HOTQUERY_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

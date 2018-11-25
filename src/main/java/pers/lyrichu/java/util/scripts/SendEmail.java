@@ -14,19 +14,19 @@ import com.sun.mail.util.MailSSLSocketFactory;
 
 public class SendEmail {
     public static void main(String[] args) throws GeneralSecurityException {
-        String from = "919987476@qq.com";
-        String to = "919987476@qq.com";
+        String from = "lyrichu@foxmail.com";
+        String[] toList = {"919987476@qq.com","1721943597@qq.com"};
         String fromPasswd = "bzphfvgjsgwvbbbj"; // 授权码替代原始密码
         String host = "smtp.qq.com";
         String subject = "java test mail";
-        String message = "Hello World from java!";
+        String message = "<div>Hello!</div><br/><hr/><div>Wish you happy every day!</div>";
         String[] attachments = {"src/main/resources/beauty.jpeg","src/main/resources/test.pdf"};
-        postEmail(from,to,fromPasswd,host,subject,message,attachments);
-        System.out.printf("Send email from %s to %s successfully!\n",from,to);
+        postEmail(from,toList,fromPasswd,host,subject,message);
+        System.out.printf("Send email from %s to %s successfully!\n",from,String.join(",",toList));
     }
 
     // 发送一个普通的邮件
-    private static void postEmail(final String from, String to,final String fromPasswd, String host,
+    public static void postEmail(final String from,String[] toList,final String fromPasswd, String host,
                                   String subject, String message) throws GeneralSecurityException {
         Properties props = System.getProperties();
         // 设置邮件服务器
@@ -51,10 +51,14 @@ public class SendEmail {
             MimeMessage msg = new MimeMessage(session);
             msg.setFrom(from);
             //set to head
-            msg.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+            for (int i =0;i<toList.length;i++) {
+                String to = toList[i];
+                msg.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+            }
             // set subject
             msg.setSubject(subject);
-            msg.setText(message);
+            // 这种方式是支持html格式内容的
+            msg.setContent(message,"text/html;charset=UTF-8");
             // 发送邮件
             Transport.send(msg);
         } catch (MessagingException e) {
@@ -63,7 +67,7 @@ public class SendEmail {
     }
 
     // 发送带有附件的邮件
-    private static void postEmail(final String from,String to,final String fromPasswd,String host,
+    public static void postEmail(final String from,String[] toList,final String fromPasswd,String host,
                                                 String subject,String message,String[] files) throws GeneralSecurityException {
         Properties props = System.getProperties();
         props.setProperty("mail.smtp.host",host);
@@ -83,7 +87,11 @@ public class SendEmail {
         try {
             MimeMessage msg = new MimeMessage(session);
             msg.setFrom(from);
-            msg.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+            // 设置收件人
+            for (int i = 0;i<toList.length;i++) {
+                String to = toList[i];
+                msg.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+            }
             msg.setSubject(subject);
             // 添加邮件的各个部分,包括文本和附件
             Multipart multipart = new MimeMultipart();

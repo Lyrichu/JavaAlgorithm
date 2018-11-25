@@ -7,14 +7,14 @@ import pers.lyrichu.DFS.FourColors;
 
 public class FourColorsTest {
 
-    @Test
-    public void solution() {
-        FourColors.initArr();
-        FourColors.solution(0);
-    }
-
-    @Test
-    public void initArr() {
-        FourColors.initArr();
-    }
+//    @Test
+//    public void solution() {
+//        FourColors.initArr();
+//        FourColors.solution(0);
+//    }
+//
+//    @Test
+//    public void initArr() {
+//        FourColors.initArr();
+//    }
 }
