@@ -16,7 +16,7 @@ public class SplitPDF {
         String pdfPath = "src/main/resources/HBase实战.pdf";
         int beginPage = 5;
         int endPage = 10;
-        String savePath = String.format("src/main/resources/HBase实战_%d_%d.pdf"
+        String savePath = String.format("src/main/resources/HBase 实战_%d_%d.pdf"
                 ,beginPage,endPage);
         splitPDF(pdfPath,savePath,beginPage,endPage);
     }
@@ -45,6 +45,11 @@ public class SplitPDF {
     }
 
     // 返回pdf的总页数
+    public static int getPdfTotalPages(String pdfPath) throws Exception{
+        PdfReader reader = new PdfReader(pdfPath);
+        return reader.getNumberOfPages();
+    }
+
     public static int getPdfTotalPages(PdfReader reader) {
         return reader.getNumberOfPages();
     }

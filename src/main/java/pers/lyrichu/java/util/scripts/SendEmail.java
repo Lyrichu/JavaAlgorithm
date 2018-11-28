@@ -15,13 +15,13 @@ import com.sun.mail.util.MailSSLSocketFactory;
 public class SendEmail {
     public static void main(String[] args) throws GeneralSecurityException {
         String from = "lyrichu@foxmail.com";
-        String[] toList = {"919987476@qq.com","1721943597@qq.com"};
+        String[] toList = {"919987476@qq.com"};
         String fromPasswd = "bzphfvgjsgwvbbbj"; // 授权码替代原始密码
         String host = "smtp.qq.com";
         String subject = "java test mail";
         String message = "<div>Hello!</div><br/><hr/><div>Wish you happy every day!</div>";
-        String[] attachments = {"src/main/resources/beauty.jpeg","src/main/resources/test.pdf"};
-        postEmail(from,toList,fromPasswd,host,subject,message);
+        String[] attachments = {"src/main/resources/beauty.jpeg","/home/ebooks/Effective Java 中文第二版-frompage1-topage10.pdf"};
+        postEmail(from,toList,fromPasswd,host,subject,message,attachments);
         System.out.printf("Send email from %s to %s successfully!\n",from,String.join(",",toList));
     }
 
@@ -32,6 +32,8 @@ public class SendEmail {
         // 设置邮件服务器
         props.setProperty("mail.smtp.host",host);
         props.put("mail.smtp.auth","true");
+        // 避免文件名过长被截断
+        props.setProperty("mail.mime.splitlongparameters", "false");
         MailSSLSocketFactory msf = new MailSSLSocketFactory();
         msf.setTrustAllHosts(true);
         props.put("mail.smtp.ssl.enable","true");
@@ -72,6 +74,8 @@ public class SendEmail {
         Properties props = System.getProperties();
         props.setProperty("mail.smtp.host",host);
         props.put("mail.smtp.auth","true");
+        // 避免文件名过长被截断
+        props.setProperty("mail.mime.splitlongparameters", "false");
         MailSSLSocketFactory msf = new MailSSLSocketFactory();
         msf.setTrustAllHosts(true);
         props.put("mail.smtp.ssl.enable","true");
@@ -108,9 +112,9 @@ public class SendEmail {
                         System.err.printf("Error:%s doesn't exist!Skip it!\n",file);
                         continue;
                     }
-                    DataSource dataSource = new FileDataSource(f);
+                    DataSource dataSource = new FileDataSource(file);
                     attachmentBodyPart.setDataHandler(new DataHandler(dataSource));
-                    attachmentBodyPart.setFileName(f.getName());
+                    attachmentBodyPart.setFileName(MimeUtility.encodeText(f.getName()));
                     // 添加附件
                     multipart.addBodyPart(attachmentBodyPart);
                 }
@@ -125,7 +129,7 @@ public class SendEmail {
 
             // 发送邮件
             transport.sendMessage(msg,msg.getAllRecipients());
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

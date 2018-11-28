@@ -53,21 +53,25 @@ public class ToutiaoHotQueryCrawler {
                 JSONArray searchWords = jsonObject.getJSONArray("search_words");
                 // 遍历每一个json of search words
                 for (int i = 0;i<searchWords.size();i++) {
-                    JSONObject words = searchWords.getJSONObject(i);
-                    // query
-                    String query = words.getString("q");
-                    // query url
-                    String url = TOUTIAO_BASE_URL + "/search/?keyword=" + query + "&from=gs_hotlist";
-                    int type = words.getIntValue("t");
-                    String tag = ""; // 默认标签
-                    if (type == 2) {
-                        tag = "hot";
+                    try {
+                        JSONObject words = searchWords.getJSONObject(i);
+                        // query
+                        String query = words.getString("q");
+                        // query url
+                        String url = TOUTIAO_BASE_URL + "/search/?keyword=" + query + "&from=gs_hotlist";
+                        int type = words.getIntValue("t");
+                        String tag = ""; // 默认标签
+                        if (type == 2) {
+                            tag = "hot";
+                        }
+                        if (type == 1) {
+                            tag = "new";
+                        }
+                        ToutiaoHotQuery hotQuery = new ToutiaoHotQuery(query,url,tag,i+1);
+                        hotQueryList.add(hotQuery);
+                    } catch (Exception e) {
+                        System.err.println("parse json error:"+e);
                     }
-                    if (type == 1) {
-                        tag = "new";
-                    }
-                    ToutiaoHotQuery hotQuery = new ToutiaoHotQuery(query,url,tag,i+1);
-                    hotQueryList.add(hotQuery);
                 }
             }
         } catch (Exception e) {
