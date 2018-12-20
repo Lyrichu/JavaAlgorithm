@@ -1,5 +1,4 @@
-package pers.lyrichu.run;
-
+package pers.lyrichu.run.tools;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -14,6 +13,7 @@ import pers.lyrichu.projects.Crawler.util.TecentNews;
 import pers.lyrichu.projects.Crawler.util.ToutiaoHotQuery;
 import pers.lyrichu.projects.Crawler.util.WeiboHotQuery;
 import pers.lyrichu.projects.Crawler.weibo.WeiboHotQueryCrawler;
+import pers.lyrichu.run.service.SendEmails;
 
 import java.io.*;
 import java.util.*;
@@ -21,66 +21,34 @@ import java.util.*;
 import static pers.lyrichu.java.basic.io.FileUtils.listDirFiles;
 import static pers.lyrichu.java.util.scripts.SendEmail.postEmail;
 
-/*
- * 在服务器上定时执行一些发送邮件的任务
- */
-public class SendEmails {
-    private static final String from = "lyrichu@foxmail.com";
-    private static final String[] toList = {"919987476@qq.com"};
-    private static final String fromPasswd = "bzphfvgjsgwvbbbj"; // 授权码替代原始密码
-    private static final String host = "smtp.qq.com";
+import static pers.lyrichu.run.tools.Constant.EMAIL_EXCUTE_MODE;
+import static pers.lyrichu.run.tools.Constant.*;
 
-    private static final String weiboSubject = "微博热搜榜";
-    private static final String toutiaoSubject = "头条热搜榜";
-    private static final String tencentNewsSubject = "腾讯新闻榜";
-    private static final String ebooksSubject = "每日读书";
+public class Helper {
+    private static Logger LOGGER = LoggerFactory.getLogger(Helper.class);
 
-    private static final int weiboRepeatEveryMinutes = 30;
-    private static final int toutiaoRepeatEveryMinutes = 60;
-    private static final int tecentNewsRepeatEveryMinutes = 120;
-    private static final int ebooksRepeatEveryMinutes = 360;
-
-    private static long nm = 1000*60; // 用于计算相差分钟数
-    // books path
-    private static final String ebooksPath = "/home/ebooks";
-    // 当前正在阅读的book的起始页码
-    private static int currentReadingPage = 0;
-    // 每次阅读的page数量
-    private static final int everyTimeReadingPage = 10;
-    // 已经阅读的总页数
-    private static int alreadyReadedPages = 0;
-    // 已经阅读的总天数
-    private static int alreadyReadedDays = 0;
-    // 已经阅读的总次数
-    private static int alreadyReadedTimes = 0;
-    // 已经阅读的书籍列表
-    private static List<String> alreadyReadedBooks = new ArrayList<>();
-    // 首次阅读的日期
-    private static final Date firstReadingDate = new Date();
-    // 保存阅读信息的文件地址(json格式保存)
-    private static final String readingInfoPath = "/home/ebooks/readingInfo.json";
-
-    private static Logger LOGGER = LoggerFactory.getLogger(SendEmails.class);
-
-    public static void main(String[] args) throws Exception {
-        Date firstExecuteTime = new Date();
-        while (true) {
-            sendWeiboHotQuery(weiboSubject,firstExecuteTime,weiboRepeatEveryMinutes);
-            sendToutiaoHotQuery(toutiaoSubject,firstExecuteTime,toutiaoRepeatEveryMinutes);
-            sendTecentNews(tencentNewsSubject,firstExecuteTime,tecentNewsRepeatEveryMinutes);
-            sendPieceOfBooks(ebooksSubject,firstExecuteTime,ebooksRepeatEveryMinutes);
-            Thread.sleep(nm);
+    /*
+     * 邮件发送微博热搜榜
+     */
+    public static void sendWeiboHotQuery(String subject,String[] toList,EMAIL_EXCUTE_MODE mode,
+                                         Date firstExecuteTime, int repeatEveryMinutes,Set<Calendar> fixTimeSet
+    ) throws Exception {
+        boolean readyToExcute = false; // 是否到达执行时间
+        // 固定时间间隔模式
+        if (mode == EMAIL_EXCUTE_MODE.SAME_TIME_DELTA) {
+            readyToExcute = timeToExecute(firstExecuteTime,repeatEveryMinutes);
+        } else {
+            // 指定时间执行模式
+            readyToExcute =
         }
-    }
-
-    private static void sendWeiboHotQuery(String subject,Date firstExecuteTime,int repeatEveryMinutes) throws Exception {
-        if (timeToExecute(firstExecuteTime,repeatEveryMinutes)) {
+        if () {
             List<WeiboHotQuery> weiboHotQueryList = WeiboHotQueryCrawler.crawlerHotQueries();
             // 发生了返回结果异常
             if (weiboHotQueryList.size() == 0) {
                 String error = "抓取微博热词失败!请及时修复!";
                 LOGGER.error(error);
-                postEmail(from,toList,fromPasswd,host,subject,error);
+                postEmail(EMAIL_FROM_ADDRESS,toList,
+                        EMAIL_FROM_PASSWD,QQ_EMAIL_HOST,subject,error);
                 return;
             }
             StringBuilder message = new StringBuilder();
@@ -267,15 +235,15 @@ public class SendEmails {
 
             }
             String msg = String.format("<b>Congratulations!</b><br>" +
-                          "这是你第<font color=\"red\">%d</font>天,第<font color=\"red\">%d</font>次阅读!<br>" +
+                            "这是你第<font color=\"red\">%d</font>天,第<font color=\"red\">%d</font>次阅读!<br>" +
                             // 已经阅读的书籍情况
-                          "%s<br>" +
-                          "你已经阅读了<font color=\"red\">%d</font>页书!太了不起了!<br>" +
+                            "%s<br>" +
+                            "你已经阅读了<font color=\"red\">%d</font>页书!太了不起了!<br>" +
                             "继续加油!祝你阅读愉快!",
-                            alreadyReadedDays,
-                            alreadyReadedTimes,
-                            readedInfo.toString(),
-                            alreadyReadedPages
+                    alreadyReadedDays,
+                    alreadyReadedTimes,
+                    readedInfo.toString(),
+                    alreadyReadedPages
 
             );
             String[] files = {splitPdfPath};
@@ -319,15 +287,20 @@ public class SendEmails {
     /*
      * 得到当前正在阅读的book的路径
      */
-    private static String getCurrentBook() throws Exception{
-       return getSortedUnreadedBooks().get(0);
+    private static String getCurrentBook() {
+        List<String> sortedBooks = getSortedUnreadedBooks();
+        if (sortedBooks.size() == 0) {
+            LOGGER.error("get current book failed!");
+            return "";
+        }
+        return sortedBooks.get(0);
     }
 
-    private static List<String> getSortedUnreadedBooks() throws Exception{
+    private static List<String> getSortedUnreadedBooks() {
         List<String> files = listDirFiles(ebooksPath);
         if (files.size() == 0) {
             LOGGER.error("read ebooks failed!");
-            throw new Exception("read ebooks failed!");
+            return files;
         }
         // readedBooks like:Effective Java 中文第二版-1.readed.pdf
         // unreadedBooks like:Effective Java 中文第二版-1.unreaded.pdf
@@ -352,11 +325,13 @@ public class SendEmails {
 
 
     /*
-     * 判断是否到达定时执行任务的时间
+     * 判断是否到达定时执行任务的时间,
+     * !固定时间间隔执行模式!
      * @param firstExecuteTime:首次执行时间
      * @param repeatEveryMinutes:重复多少分钟执行一次
      */
-    private static boolean timeToExecute(Date firstExecuteTime,int repeatEveryMinutes) {
+    public static boolean timeToExecute(Date firstExecuteTime,int repeatEveryMinutes) {
+        int nm = 1000*60;
         Date now = new Date();
         // 两个日期相差的毫秒数
         long msDelta = now.getTime() - firstExecuteTime.getTime();
@@ -367,6 +342,29 @@ public class SendEmails {
         }
         return false;
     }
+
+    /*
+     *判断是否到达定时执行任务的时间,
+     * ! 指定时间执行模式(需要指定时分秒)
+     * @param executeTimeSet:要执行的时间集合
+     */
+    public static boolean timeToExecute(Set<Calendar> executeTimeSet) {
+        for (Calendar calendar:executeTimeSet) {
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+            Calendar now = Calendar.getInstance();
+            int curHour = now.get(Calendar.HOUR_OF_DAY);
+            int curMinute = now.get(Calendar.MINUTE);
+            int curSecond = now.get(Calendar.SECOND);
+            if (hour == curHour && minute == curMinute && second == curSecond) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     private static int getCurrentReadingPage() {
         return currentReadingPage;
