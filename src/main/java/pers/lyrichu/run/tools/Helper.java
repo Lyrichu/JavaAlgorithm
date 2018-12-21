@@ -33,15 +33,10 @@ public class Helper {
     public static void sendWeiboHotQuery(String subject,String[] toList,EMAIL_EXCUTE_MODE mode,
                                          Date firstExecuteTime, int repeatEveryMinutes,Set<Calendar> fixTimeSet
     ) throws Exception {
-        boolean readyToExcute = false; // 是否到达执行时间
-        // 固定时间间隔模式
-        if (mode == EMAIL_EXCUTE_MODE.SAME_TIME_DELTA) {
-            readyToExcute = timeToExecute(firstExecuteTime,repeatEveryMinutes);
-        } else {
-            // 指定时间执行模式
-            readyToExcute =
-        }
-        if () {
+        // 检查是否到达执行时间
+        boolean readyToExcute = checkReadyToExecute(mode,firstExecuteTime,repeatEveryMinutes,fixTimeSet);
+
+        if (readyToExcute) {
             List<WeiboHotQuery> weiboHotQueryList = WeiboHotQueryCrawler.crawlerHotQueries();
             // 发生了返回结果异常
             if (weiboHotQueryList.size() == 0) {
@@ -80,19 +75,24 @@ public class Helper {
                 );
                 message.append(html);
             }
-            postEmail(from,toList,fromPasswd,host,subject,message.toString());
+            postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,
+                    QQ_EMAIL_HOST,subject,message.toString());
             LOGGER.info("成功发送微博热搜榜!");
         }
     }
 
-    private static void sendToutiaoHotQuery(String subject,Date firstExecuteTime,int repeatEveryMinutes) throws Exception {
-        if (timeToExecute(firstExecuteTime,repeatEveryMinutes)) {
+    private static void sendToutiaoHotQuery(String subject,String[] toList,EMAIL_EXCUTE_MODE mode,
+                                            Date firstExecuteTime,int repeatEveryMinutes,Set<Calendar> fixTimeSet) throws Exception {
+        boolean readyToExecute = checkReadyToExecute(mode,firstExecuteTime,repeatEveryMinutes,fixTimeSet);
+
+        if (readyToExecute) {
             List<ToutiaoHotQuery> toutiaoHotQueryList = ToutiaoHotQueryCrawler.crawlerHotQueries();
             // 发生了返回结果异常
             if (toutiaoHotQueryList.size() == 0) {
                 String error = "抓取头条热词失败!请及时修复!";
                 LOGGER.error(error);
-                postEmail(from,toList,fromPasswd,host,subject,error);
+                postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,
+                        QQ_EMAIL_HOST,subject,error);
                 return;
             }
             StringBuilder message = new StringBuilder();
@@ -120,20 +120,23 @@ public class Helper {
                 );
                 message.append(html);
             }
-            postEmail(from,toList,fromPasswd,host,subject,message.toString());
+            postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,QQ_EMAIL_HOST,subject,message.toString());
             LOGGER.info("成功发送头条热搜榜!");
         }
     }
 
 
-    private static void sendTecentNews(String subject,Date firstExecuteTime,int repeatEveryMinutes) throws Exception {
-        if (timeToExecute(firstExecuteTime,repeatEveryMinutes)) {
+    private static void sendTecentNews(String subject,String[] toList,EMAIL_EXCUTE_MODE mode,
+                                       Date firstExecuteTime,int repeatEveryMinutes,Set<Calendar> fixTimeSet
+    ) throws Exception {
+        boolean readyToExecute = checkReadyToExecute(mode,firstExecuteTime,repeatEveryMinutes,fixTimeSet);
+        if (readyToExecute) {
             List<TecentNews> tecentNewsList = TecentNewsCrawler.crawlerNews();
             // 发生了返回结果异常
             if (tecentNewsList.size() == 0) {
                 String error = "抓取腾讯新闻失败!请及时修复!";
                 LOGGER.error(error);
-                postEmail(from,toList,fromPasswd,host,subject,error);
+                postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,QQ_EMAIL_HOST,subject,error);
                 return;
             }
             StringBuilder message = new StringBuilder();
@@ -156,27 +159,37 @@ public class Helper {
                 );
                 message.append(html);
             }
-            postEmail(from,toList,fromPasswd,host,subject,message.toString());
+            postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,QQ_EMAIL_HOST,subject,message.toString());
             LOGGER.info("成功发送腾讯新闻!");
         }
     }
 
-    private static void sendPieceOfBooks(String subject,Date firstExecuteTime,int repeatEveryMinutes) throws Exception {
-        if (timeToExecute(firstExecuteTime,repeatEveryMinutes)) {
+    private static void sendPieceOfBooks(String subject,String[] toList,EMAIL_EXCUTE_MODE mode,
+                                         Date firstExecuteTime,int repeatEveryMinutes,Set<Calendar> fixTimeSet
+    ) throws Exception {
+        boolean readyToExecute = checkReadyToExecute(mode,firstExecuteTime,repeatEveryMinutes,fixTimeSet);
+        List<String> alreadyReadedBooks = new ArrayList<>();
+        int alreadyReadedPages = 0;
+        int alreadyReadedTimes = 0;
+        int alreadyReadedDays = 0;
+        int currentReadingPage = 0;
+
+        if (readyToExecute) {
             List<String> sortedUnreadedBooks = getSortedUnreadedBooks();
             if (sortedUnreadedBooks.size() == 0) {
                 String errMsg = "读取服务器书籍数目为空,请及时检查修复!";
                 LOGGER.error(errMsg);
-                postEmail(from,toList,fromPasswd,host,subject,errMsg);
+                postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,QQ_EMAIL_HOST,subject,errMsg);
                 return;
             }
             if (sortedUnreadedBooks.size() == 1) {
                 String warnMsg = String.format("当前服务器书库只有%d本未读的书:%s!请及时添加新书!",sortedUnreadedBooks.size(),sortedUnreadedBooks.get(0));
                 LOGGER.error(warnMsg);
-                postEmail(from,toList,fromPasswd,host,subject,warnMsg);
+                postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,QQ_EMAIL_HOST,subject,warnMsg);
             }
             String currentBook = getCurrentBook();
-            File readingInfoFile = new File(readingInfoPath);
+            File readingInfoFile = new File(EBOOKS_READING_INFO_PATH);
+
             if (readingInfoFile.exists()) {
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(readingInfoFile));
@@ -197,7 +210,7 @@ public class Helper {
                     }
                     reader.close();
                 } catch (Exception e) {
-                    LOGGER.error("read info from {} failed!{}",readingInfoPath,e);
+                    LOGGER.error("read info from {} failed!{}",EBOOKS_READING_INFO_PATH,e);
                 }
             }
             int totalPages = SplitPDF.getPdfTotalPages(currentBook);
@@ -205,12 +218,13 @@ public class Helper {
             // 将当前的书改名为readed
             // 继续读取下一本书
             if (currentReadingPage >= totalPages) {
+
                 alreadyReadedBooks.add(getBookNameByAbsPath(currentBook));
                 // 设置本书已经阅读
                 if (!setBookReaded(currentBook)) {
                     String errMsg = String.format("设置%s 为已阅读出错!请及时检查处理!",currentBook);
                     LOGGER.error(errMsg);
-                    postEmail(from,toList,fromPasswd,host,subject,errMsg);
+                    postEmail(EMAIL_FROM_ADDRESS,toList,EMAIL_FROM_PASSWD,QQ_EMAIL_HOST,subject,errMsg);
                     return;
                 }
                 currentBook = getCurrentBook();
@@ -218,7 +232,7 @@ public class Helper {
             }
             String currentBookName = currentBook.split("_")[0];
             int beginPage = currentReadingPage+1;
-            int endPage = Math.min(SplitPDF.getPdfTotalPages(currentBook),currentReadingPage+everyTimeReadingPage);
+            int endPage = Math.min(SplitPDF.getPdfTotalPages(currentBook),currentReadingPage+EVERY_TIME_READING_PAGE_NUM);
             String splitPdfPath = String.format("%s_%d_%d.pdf",currentBookName,beginPage,endPage);
             SplitPDF.splitPDF(currentBook,splitPdfPath,beginPage,endPage);
             alreadyReadedDays = getDaysDelta(firstReadingDate,new Date()) + 1;
@@ -377,5 +391,14 @@ public class Helper {
     private static boolean setBookReaded(String bookPath) {
         String readedName = bookPath.replace("unreaded","readed");
         return FileUtils.renameFile(bookPath,readedName);
+    }
+
+    public static boolean checkReadyToExecute(EMAIL_EXCUTE_MODE mode,Date firstExecuteTime,
+                                              int repeatEveryMinutes,Set<Calendar> fixTimeSet) {
+        if (mode == EMAIL_EXCUTE_MODE.SAME_TIME_DELTA) {
+            return timeToExecute(firstExecuteTime, repeatEveryMinutes);
+        } else {
+            return timeToExecute(fixTimeSet);
+        }
     }
 }
