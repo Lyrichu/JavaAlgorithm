@@ -1,5 +1,9 @@
 package pers.lyrichu.run.tools;
 
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
+
 public class Constant {
     // 发邮件地址
     public static final String EMAIL_FROM_ADDRESS = "lyrichu@foxmail.com";
@@ -24,4 +28,48 @@ public class Constant {
         SAME_TIME_DELTA, // 固定的时间间隔发送
         FIX_TIME // 在特定的时间点发送
     }
+
+    public enum EMAIL_TASK {
+        WEIBO_HOTQUERY,
+        TECENT_NEWS,
+        TOUTIAO_HOTQUERY,
+        EBOOKS_DAILY_READING
+    }
+
+    public static Set<Calendar> WEIBO_HOTQUERY_EXECUTE_TIME_SET = new HashSet<Calendar>(){
+        {
+            add(Helper.getExecuteCalendar(9,30,0));
+            add(Helper.getExecuteCalendar(12,30,0));
+            add(Helper.getExecuteCalendar(16,0,0));
+            add(Helper.getExecuteCalendar(19,0,0));
+        }
+    };
+
+    public static Set<Calendar> TOUTIAO_HOTQUERY_EXECUTE_TIME_SET = new HashSet<Calendar>(){
+        {
+            add(Helper.getExecuteCalendar(9,30,15));
+            add(Helper.getExecuteCalendar(12,30,15));
+            add(Helper.getExecuteCalendar(16,0,15));
+            add(Helper.getExecuteCalendar(19,0,15));
+        }
+    };
+
+    public static Set<Calendar> TECENT_NEWS_EXECUTE_TIME_SET = new HashSet<Calendar>(){
+        {
+            add(Helper.getExecuteCalendar(9,30,30));
+            add(Helper.getExecuteCalendar(12,30,30));
+            add(Helper.getExecuteCalendar(16,0,30));
+            add(Helper.getExecuteCalendar(19,0,30));
+        }
+    };
+
+    public static Set<Calendar> EBOOKS_DAILY_READING_EXECUTE_TIME_SET = new HashSet<Calendar>(){
+        {
+            add(Helper.getExecuteCalendar(9,40,0));
+            add(Helper.getExecuteCalendar(12,40,0));
+            add(Helper.getExecuteCalendar(18,30,0));
+        }
+    };
+
+
 }
