@@ -39,9 +39,9 @@ public class SendEmails {
 
         Set<Thread> threadSet = new HashSet<Thread>(){
             {
-//                add(weiboHotQueryThread);
-//                add(toutiaoHotQueryThread);
-//                add(ebooksDailyReadingThread);
+                add(weiboHotQueryThread);
+                add(toutiaoHotQueryThread);
+                add(ebooksDailyReadingThread);
                 add(papersDailyReadingThread);
             }
         };

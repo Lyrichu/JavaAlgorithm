@@ -376,17 +376,25 @@ public class EmailTools {
                 });
                 for (int i = 0;i<alreadyReadedPapers.size();i++) {
                     String subjectAndTitle = alreadyReadedPapers.get(i);
-                    String[] splits = subjectAndTitle.split("|");
+                    String[] splits = subjectAndTitle.split("\\|");
                     String paperSubject = splits[0];
                     String paperTitle = splits[1];
                     if (papersMap.containsKey(paperSubject)) {
                         papersMap.get(paperSubject).add(paperTitle);
                     } else {
-                        papersMap.put(paperSubject,new ArrayList<>());
+                        papersMap.put(paperSubject,
+                                new ArrayList<String>()
+                                {
+                                    {
+                                        add(paperTitle);
+                                    }
+                                }
+                            );
                     }
                 }
                 int subIndex,index;
                 subIndex = index = 0;
+                // key是paper subject
                 for (String key:papersMap.keySet()) {
                     List<String> subPapersList = papersMap.get(key);
                     readedInfo.append(String.format("%d.<font color=\"red\">%s</font><br>",subIndex+1,key));
@@ -402,7 +410,7 @@ public class EmailTools {
                             "这是你第<font color=\"red\">%d</font>天阅读paper!<br>" +
                             // 已经阅读的书籍情况
                             "%s<br>" +
-                            "你已经阅读了<font color=\"red\">%d</font>篇paper!太了不起了!<br>" +
+                            "你即将阅读第<font color=\"red\">%d</font>篇paper!太了不起了!<br>" +
                             "继续加油!祝你阅读paper愉快!",
                     alreadyReadedDays,
                     readedInfo.toString(),

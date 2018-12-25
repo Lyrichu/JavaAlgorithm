@@ -82,8 +82,7 @@ public class Constant {
 
     public static Set<Calendar> PAPERS_DAILY_READING_EXECUTE_TIME_SET = new HashSet<Calendar>(){
         {
-            add(Helper.getExecuteCalendar(1,10,0));
-            add(Helper.getExecuteCalendar(1,10,10));
+            add(Helper.getExecuteCalendar(9,20,0));
         }
     };
 
