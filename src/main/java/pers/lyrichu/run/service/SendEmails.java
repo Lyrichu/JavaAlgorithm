@@ -28,15 +28,21 @@ public class SendEmails {
                 EMAIL_EXCUTE_MODE.FIX_TIME,null,0,TOUTIAO_HOTQUERY_EXECUTE_TIME_SET
         );
         Thread ebooksDailyReadingThread = EmailTools.getEmailTaskThread(
-                EMAIL_TASK.EBOOKS_DAILY_READING,"ebooksDailyReading",DAILY_READING_SUBJECT,toList,
+                EMAIL_TASK.EBOOKS_DAILY_READING,"ebooksDailyReading",EBOOKS_DAILY_READING_SUBJECT,toList,
                 EMAIL_EXCUTE_MODE.FIX_TIME,null,0,EBOOKS_DAILY_READING_EXECUTE_TIME_SET
+        );
+
+        Thread papersDailyReadingThread = EmailTools.getEmailTaskThread(
+                EMAIL_TASK.PAPERS_DAILY_READING,"papersDailyReading",PAPERS_DAILY_READING_SUBJECT,toList,
+                EMAIL_EXCUTE_MODE.FIX_TIME,null,0,PAPERS_DAILY_READING_EXECUTE_TIME_SET
         );
 
         Set<Thread> threadSet = new HashSet<Thread>(){
             {
-                add(weiboHotQueryThread);
-                add(toutiaoHotQueryThread);
-                add(ebooksDailyReadingThread);
+//                add(weiboHotQueryThread);
+//                add(toutiaoHotQueryThread);
+//                add(ebooksDailyReadingThread);
+                add(papersDailyReadingThread);
             }
         };
 

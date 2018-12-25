@@ -73,4 +73,14 @@ public class Helper {
         calendar.set(Calendar.SECOND,second);
         return calendar;
     }
+
+    /*
+     * 获取daysoffset天之前的日期,"%d-%02d-%02d"形式表示
+     */
+    public static String getOriDate(int daysOffset) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR,daysOffset);
+        return String.format("%d-%02d-%02d",
+                Calendar.YEAR,Calendar.MONTH,Calendar.DAY_OF_MONTH);
+    }
 }
