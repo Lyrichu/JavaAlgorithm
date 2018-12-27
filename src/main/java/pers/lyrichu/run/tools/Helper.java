@@ -81,6 +81,9 @@ public class Helper {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR,daysOffset);
         return String.format("%d-%02d-%02d",
-                Calendar.YEAR,Calendar.MONTH,Calendar.DAY_OF_MONTH);
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH)+1,
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
     }
 }

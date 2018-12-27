@@ -25,8 +25,7 @@ import static pers.lyrichu.run.tools.Constant.*;
 public class EmailTools {
 
     private static Logger LOGGER = LoggerFactory.getLogger(EmailTools.class);
-    // 上次执行日期
-    private static String lastExecuteDate = Helper.getOriDate(0);
+
     /*
      * 邮件发送微博热搜榜
      */
@@ -179,7 +178,7 @@ public class EmailTools {
         int alreadyReadedTimes = 0;
         int alreadyReadedDays = 0;
         int currentReadingPage = 0;
-
+        String lastExecuteDate = Helper.getOriDate(0);
         if (readyToExecute) {
             List<String> sortedUnreadedBooks = getSortedUnreadedBooks();
             if (sortedUnreadedBooks.size() == 0) {
@@ -205,6 +204,7 @@ public class EmailTools {
                     alreadyReadedTimes = json.getIntValue("alreadyReadedTimes");
                     alreadyReadedDays = json.getIntValue("alreadyReadedDays");
                     currentReadingPage = json.getIntValue("currentReadingPage");
+                    lastExecuteDate = json.getString("lastExecuteDate");
                     JSONArray array = json.getJSONArray("alreadyReadedBooks");
                     if (array == null || array.size() == 0) {
                         alreadyReadedBooks = new ArrayList<>();
@@ -292,6 +292,7 @@ public class EmailTools {
             saveJson.put("alreadyReadedTimes",alreadyReadedTimes);
             saveJson.put("alreadyReadedDays",alreadyReadedDays);
             saveJson.put("currentReadingPage",currentReadingPage);
+            saveJson.put("lastExecuteDate",lastExecuteDate);
             saveJson.put("alreadyReadedBooks",saveArr);
             BufferedWriter writer = new BufferedWriter(new FileWriter(EBOOKS_READING_INFO_PATH));
             writer.write(saveJson.toJSONString());
@@ -308,6 +309,7 @@ public class EmailTools {
         boolean readyToExecute = Helper.checkReadyToExecute(mode,firstExecuteTime,repeatEveryMinutes,fixTimeSet);
         int alreadyReadedPapersNum = 0;
         int alreadyReadedDays = 0;
+        String lastExecuteDate = Helper.getOriDate(0); // 上一次执行的日期
         List<String> alreadyReadedPapers = new ArrayList<>();
         if (readyToExecute) {
             List<String> sortedUnreadedPapers = getSortedUnreadedPapers();
@@ -332,6 +334,7 @@ public class EmailTools {
                     JSONObject json = JSON.parseObject(line);
                     alreadyReadedDays = json.getIntValue("alreadyReadedDays");
                     alreadyReadedPapersNum = json.getIntValue("alreadyReadedPapersNum");
+                    lastExecuteDate = json.getString("lastExecuteDate");
                     JSONArray array = json.getJSONArray("alreadyReadedPapers");
                     if (array == null || array.size() == 0) {
                         alreadyReadedPapers = new ArrayList<>();
@@ -435,6 +438,7 @@ public class EmailTools {
             saveJson.put("alreadyReadedPapersNum",alreadyReadedPapersNum);
             saveJson.put("alreadyReadedDays",alreadyReadedDays);
             saveJson.put("alreadyReadedPapers",saveArr);
+            saveJson.put("lastExecuteDate",lastExecuteDate);
             BufferedWriter writer = new BufferedWriter(new FileWriter(PAPERS_READING_INFO_PATH));
             writer.write(saveJson.toJSONString());
             writer.newLine();
