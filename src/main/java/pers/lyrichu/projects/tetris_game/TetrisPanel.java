@@ -24,6 +24,9 @@ public class TetrisPanel extends JPanel {
   public static final int SPEED_FAST_TIME_DELAY = 300; // 快速,延时 300ms
   public static final int SPEED_VERY_FAST_TIME_DELAY = 100; // 极速,延时 100ms
 
+  private final String GAME_OVER_MESSAGE = "Game Over!";
+  private final String GAME_OVER_TITLE = "You Lose!";
+
   private static final String[] AUTHOR_INFO = {
       "制作人：","Lyrichu"
   };
@@ -75,7 +78,7 @@ public class TetrisPanel extends JPanel {
           TetrisPanel.this.getNextBlock();
         }
         else{
-          JOptionPane.showMessageDialog(TetrisPanel.this.getParent(), "GAME OVER");
+          JOptionPane.showMessageDialog(TetrisPanel.this.getParent(), GAME_OVER_MESSAGE,GAME_OVER_TITLE,JOptionPane.PLAIN_MESSAGE);
           TetrisPanel.this.initPanel();
         }
       }
