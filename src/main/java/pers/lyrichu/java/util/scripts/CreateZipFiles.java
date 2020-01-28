@@ -11,7 +11,7 @@ import java.util.zip.ZipOutputStream;
 
 public class CreateZipFiles {
     private static String basePath = "src/main/resources";
-    private static String[] files = (String[]) Arrays.asList(basePath+"/stopwords.txt",
+    private static String[] files = (String[]) Arrays.asList(basePath+ "/test/stopwords.txt",
             basePath+"/test.pdf",basePath+"/test.txt").toArray();
     private static String zipFilePath = basePath + "/test.zip";
 

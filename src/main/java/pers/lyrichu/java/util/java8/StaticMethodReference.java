@@ -6,7 +6,7 @@ public class StaticMethodReference {
     }
 
     interface PersonFactory<P extends Person> {
-        P create(String firstName,String lastName);
+        P create01(String firstName,String lastName);
     }
 
     static class Person {
@@ -28,7 +28,7 @@ public class StaticMethodReference {
         System.out.println(converted);
         // 构造函数的关键字引用
         PersonFactory<Person> personFactory = Person::new;
-        Person person = personFactory.create("chengchun","Hu");
+        Person person = personFactory.create01("chengchun","Hu");
         System.out.println("firstName:"+person.firstName);
         System.out.println("lastName:"+person.lastName);
     }
