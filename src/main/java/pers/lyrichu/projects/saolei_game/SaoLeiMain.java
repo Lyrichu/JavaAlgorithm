@@ -165,7 +165,7 @@ public class SaoLeiMain implements ActionListener {
     costTimeLabel.setBackground(Color.WHITE);
     costTimeLabel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-    // button 布局,1行5列(有5个label)
+    // button 布局,1行3列(有3个label)
     GridBagConstraints bannerButtonGBC = new GridBagConstraints(0,0,3,1,1.0,1.0,
         GridBagConstraints.CENTER,GridBagConstraints.BOTH,
         new Insets(0,0,0,0),0,0);

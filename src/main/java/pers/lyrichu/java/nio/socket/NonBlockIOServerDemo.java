@@ -41,13 +41,13 @@ public class NonBlockIOServerDemo {
         } else if (key.isReadable()) {
           SocketChannel channel = (SocketChannel) key.channel();
           ByteBuffer bb = ByteBuffer.allocate(1024);
-          int len;
-          while ((len = channel.read(bb)) != -1) {
+          int len = channel.read(bb);
+          if (len > 0) {
             bb.flip();
             // 直接打印读取到的数据
             System.out.println(new String(bb.array(),0,len));
-            bb.clear();
           }
+          bb.clear();
         }
         it.remove();
       }
