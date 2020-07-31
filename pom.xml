@@ -22,6 +22,8 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <!-- 用于运行时获取参数名字-->
+                    <compilerArgument>parameters</compilerArgument>
                 </configuration>
             </plugin>
 
@@ -246,6 +248,13 @@
             <groupId>com.github.vinhkhuc</groupId>
             <artifactId>jfasttext</artifactId>
             <version>0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
