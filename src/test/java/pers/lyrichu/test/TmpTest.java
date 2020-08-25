@@ -1,6 +1,11 @@
 package pers.lyrichu.test;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
@@ -8,6 +13,9 @@ import com.google.gson.JSON;
 import org.junit.Test;
 
 public class TmpTest {
+
+  private static final Pattern NOT_CHINESE_PATTERN = Pattern.compile("[^一-龥]");
+  private boolean b;
 
   @Test
   public void test1() {
@@ -52,6 +60,27 @@ public class TmpTest {
         System.out.println(i);
       }
     }
+  }
+
+
+  public static boolean allChinsesChar(String str) {
+    Matcher m = NOT_CHINESE_PATTERN.matcher(str);
+    if (m.find()) {
+      return false;
+    }
+    return true;
+  }
+
+  @Test
+  public void test5() {
+    String s = "我爱中国a我";
+    System.out.println(allChinsesChar(s));
+    System.out.println(b);
+  }
+
+  public static void main(String[] args) {
+    List<String> s = new ArrayList<>(Arrays.asList("a","1","b"));
+    System.out.println(s.subList(0,0));
   }
 
 }
